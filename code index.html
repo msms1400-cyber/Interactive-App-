@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>درس اللغة الإنجليزية: When are you Traveling?</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        poppins: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4F46E5', // Indigo 600
+                        secondary: '#10B981', // Emerald 500
+                        accent: '#F59E0B', // Amber 500
+                        dark: '#1E293B',
+                        light: '#F8FAFC'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #F0Fdf4;
+            background-image: radial-gradient(#d1fae5 1px, transparent 1px);
+            background-size: 20px 20px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .en-text {
+            font-family: 'Poppins', sans-serif;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        .slide-up { animation: slideUp 0.5s ease-out; }
+        .bounce { animation: bounce 2s infinite; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes bounce { 
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        /* Interactive Card Hover */
+        .hover-card {
+            transition: all 0.3s ease;
+        }
+        .hover-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Confetti Canvas */
+        #confetti-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 100;
+        }
+
+        /* Print Styles */
+        @media print {
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100vw;
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0;
+                padding: 0;
+                background-color: white;
+                z-index: 9999;
+            }
+            #print-area img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+            .no-print { display: none !important; }
+            @page { size: A4 landscape; margin: 0; }
+        }
+
+        /* Options styling */
+        .option-btn {
+            transition: all 0.2s;
+        }
+        .option-btn.selected {
+            border-color: #4F46E5;
+            background-color: #EEF2FF;
+        }
+        .option-btn.correct {
+            border-color: #10B981;
+            background-color: #D1FAE5;
+            color: #064E3B;
+        }
+        .option-btn.wrong {
+            border-color: #EF4444;
+            background-color: #FEE2E2;
+            color: #7F1D1D;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- Confetti Layer -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <main class="bg-white rounded-3xl shadow-xl w-full max-w-4xl overflow-hidden border-4 border-white/50 relative">
+        
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-primary to-indigo-500 p-6 text-white text-center rounded-t-2xl relative shadow-md">
+            <h1 class="text-2xl md:text-3xl font-bold mb-2">الوحدة 12: Form, Meaning and Function</h1>
+            <p class="text-indigo-100 text-lg flex items-center justify-center gap-2">
+                <i class="fa-solid fa-plane-departure"></i> 
+                <span>When are you Traveling?</span>
+            </p>
+        </header>
+
+        <div class="p-6 md:p-8 min-h-[400px] flex flex-col relative" id="app-content">
+            
+            <section id="screen-welcome" class="flex-1 flex flex-col items-center justify-center text-center fade-in">
+                <div class="w-32 h-32 bg-indigo-100 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                    <i class="fa-solid fa-user-graduate text-5xl text-primary"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-dark mb-4">أهلاً بك يا بطل! 🌟</h2>
+                <p class="text-gray-600 mb-8 text-lg max-w-md">في هذا الدرس سنتعلم كيف نربط الجمل بوقت حدوثها، وكيف نصف الحركة باللغة الإنجليزية بسهولة.</p>
+                
+                <div class="w-full max-w-sm mb-6">
+                    <label for="student-name" class="block text-right font-bold text-gray-700 mb-2">اكتب اسمك الثلاثي لتبدأ ولإصدار شهادتك:</label>
+                    <input type="text" id="student-name" class="w-full px-5 py-4 rounded-xl border-2 border-gray-300 focus:border-primary focus:ring-4 focus:ring-indigo-100 transition-all text-lg font-bold text-center" placeholder="مثال: أحمد خالد سعيد">
+                    <p id="name-error" class="text-red-500 text-sm mt-2 hidden">يرجى كتابة اسمك للمتابعة!</p>
+                </div>
+
+                <button onclick="startApp()" class="bg-primary hover:bg-indigo-700 text-white font-bold py-4 px-10 rounded-xl shadow-lg transform transition hover:-translate-y-1 text-xl flex items-center gap-3">
+                    <span>ابدأ التعلم الآن</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </section>
+
+            <section id="screen-learn-1" class="hidden flex-1 flex flex-col fade-in">
+                <div class="flex items-center justify-between mb-6 border-b pb-4">
+                    <h2 class="text-2xl font-bold text-primary flex items-center gap-2">
+                        <i class="fa-regular fa-clock"></i> 1. أدوات الربط الزمنية (Time Clauses)
+                    </h2>
+                    <span class="bg-blue-100 text-blue-800 text-sm font-bold px-3 py-1 rounded-full">شرح</span>
+                </div>
+                
+                <div class="bg-yellow-50 border-r-4 border-accent p-4 rounded-lg mb-6 shadow-sm">
+                    <p class="font-bold text-gray-800"><i class="fa-solid fa-lightbulb text-accent mr-1"></i> القاعدة الذهبية:</p>
+                    <p class="mt-2 text-gray-700">نستخدم هذه الكلمات لربط حدثين. <strong class="text-red-600">القاعدة الأهم:</strong> لا نستخدم المستقبل (<span class="en-text font-bold">will</span>) بعد هذه الكلمات مباشرة، بل نستخدم المضارع البسيط.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    <!-- Cards -->
+                    <div class="hover-card bg-white border-2 border-gray-100 rounded-xl p-4 flex flex-col justify-between shadow-sm">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="en-text text-xl font-bold text-primary">when</span>
+                            <span class="text-sm bg-gray-100 px-2 py-1 rounded text-gray-600">عندما</span>
+                        </div>
+                        <p class="en-text text-gray-700 mb-2">They'll go skiing <span class="text-primary font-bold">when</span> they are on vacation.</p>
+                        <button onclick="speak('They will go skiing when they are on vacation.')" class="self-end text-gray-400 hover:text-primary transition-colors"><i class="fa-solid fa-volume-up text-xl"></i></button>
+                    </div>
+
+                    <div class="hover-card bg-white border-2 border-gray-100 rounded-xl p-4 flex flex-col justify-between shadow-sm">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="en-text text-xl font-bold text-primary">while</span>
+                            <span class="text-sm bg-gray-100 px-2 py-1 rounded text-gray-600">بينما / أثناء</span>
+                        </div>
+                        <p class="en-text text-gray-700 mb-2">I'll go shopping <span class="text-primary font-bold">while</span> you cook dinner.</p>
+                        <button onclick="speak('I will go shopping while you cook dinner.')" class="self-end text-gray-400 hover:text-primary transition-colors"><i class="fa-solid fa-volume-up text-xl"></i></button>
+                    </div>
+
+                    <div class="hover-card bg-white border-2 border-gray-100 rounded-xl p-4 flex flex-col justify-between shadow-sm">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="en-text text-xl font-bold text-primary">as soon as</span>
+                            <span class="text-sm bg-gray-100 px-2 py-1 rounded text-gray-600">بمجرد أن</span>
+                        </div>
+                        <p class="en-text text-gray-700 mb-2"><span class="text-primary font-bold">As soon as</span> we arrive, we're going to the hotel.</p>
+                        <button onclick="speak('As soon as we arrive, we are going to the hotel.')" class="self-end text-gray-400 hover:text-primary transition-colors"><i class="fa-solid fa-volume-up text-xl"></i></button>
+                    </div>
+
+                    <div class="hover-card bg-white border-2 border-gray-100 rounded-xl p-4 flex flex-col justify-between shadow-sm">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="en-text text-xl font-bold text-primary">before / after</span>
+                            <span class="text-sm bg-gray-100 px-2 py-1 rounded text-gray-600">قبل / بعد</span>
+                        </div>
+                        <p class="en-text text-gray-700 mb-2">He won't go out <span class="text-primary font-bold">before</span> he finishes homework.</p>
+                        <button onclick="speak('He won not go out before he finishes homework.')" class="self-end text-gray-400 hover:text-primary transition-colors"><i class="fa-solid fa-volume-up text-xl"></i></button>
+                    </div>
+                </div>
+
+                <button onclick="nextScreen('screen-learn-2')" class="mt-auto self-end bg-secondary hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-md transition-transform hover:-translate-y-1 flex items-center gap-2">
+                    التالي: حروف الجر <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </section>
+
+            <section id="screen-learn-2" class="hidden flex-1 flex flex-col fade-in">
+                <div class="flex items-center justify-between mb-6 border-b pb-4">
+                    <h2 class="text-2xl font-bold text-secondary flex items-center gap-2">
+                        <i class="fa-solid fa-route"></i> 2. حروف جر الحركة (Prepositions of Movement)
+                    </h2>
+                    <span class="bg-emerald-100 text-emerald-800 text-sm font-bold px-3 py-1 rounded-full">شرح</span>
+                </div>
+                
+                <p class="text-gray-700 mb-6 font-bold">تُستخدم هذه الكلمات لوصف مسار الحركة من مكان لآخر. اضغط على الكلمة لسماعها:</p>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 text-center">
+                    <!-- Preposition Items -->
+                    <div class="hover-card bg-white border-2 border-gray-100 rounded-xl p-4 cursor-pointer flex flex-col items-center" onclick="speak('across')">
+                        <i class="fa-solid fa-grip-lines text-3xl text-gray-400 mb-2 relative"><i class="fa-solid fa-arrow-right-long text-red-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></i></i>
+                        <span class="en-text font-bold text-lg text-dark block mt-2">across</span>
+                        <span class="text-sm text-gray-500">عبر / للجهة الأخرى</span>
+                    </div>
+                    
+                    <div class="hover-card bg-white border-2 border-gray-100 rounded-xl p-4 cursor-pointer flex flex-col items-center" onclick="speak('along')">
+                        <i class="fa-solid fa-road text-3xl text-gray-400 mb-2 relative"><i class="fa-solid fa-arrow-up-long text-red-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></i></i>
+                        <span class="en-text font-bold text-lg text-dark block mt-2">along</span>
+                        <span class="text-sm text-gray-500">بمحاذاة / على طول</span>
+                    </div>
+
+                    <div class="hover-card bg-white border-2 border-gray-100 rounded-xl p-4 cursor-pointer flex flex-col items-center" onclick="speak('around')">
+                        <i class="fa-solid fa-square-full text-3xl text-gray-300 mb-2 relative"><i class="fa-solid fa-arrow-rotate-right text-red-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 scale-150"></i></i>
+                        <span class="en-text font-bold text-lg text-dark block mt-2">around</span>
+                        <span class="text-sm text-gray-500">حول</span>
+                    </div>
+
+                    <div class="hover-card bg-white border-2 border-gray-100 rounded-xl p-4 cursor-pointer flex flex-col items-center" onclick="speak('through')">
+                        <i class="fa-solid fa-bars text-3xl text-gray-400 mb-2 relative"><i class="fa-solid fa-arrow-right-long text-red-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></i></i>
+                        <span class="en-text font-bold text-lg text-dark block mt-2">through</span>
+                        <span class="text-sm text-gray-500">خلال (نفق/غابة)</span>
+                    </div>
+
+                    <div class="hover-card bg-white border-2 border-gray-100 rounded-xl p-4 cursor-pointer flex flex-col items-center" onclick="speak('out of')">
+                        <i class="fa-regular fa-square text-3xl text-gray-400 mb-2 relative"><i class="fa-solid fa-arrow-right-from-bracket text-red-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></i></i>
+                        <span class="en-text font-bold text-lg text-dark block mt-2">out of</span>
+                        <span class="text-sm text-gray-500">إلى خارج</span>
+                    </div>
+
+                    <div class="hover-card bg-white border-2 border-gray-100 rounded-xl p-4 cursor-pointer flex flex-col items-center" onclick="speak('into')">
+                        <i class="fa-regular fa-square text-3xl text-gray-400 mb-2 relative"><i class="fa-solid fa-arrow-right-to-bracket text-red-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></i></i>
+                        <span class="en-text font-bold text-lg text-dark block mt-2">into</span>
+                        <span class="text-sm text-gray-500">إلى داخل</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-between mt-auto">
+                    <button onclick="nextScreen('screen-learn-1')" class="text-gray-500 hover:text-gray-800 font-bold py-2 px-4 flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-right"></i> السابق
+                    </button>
+                    <button onclick="startQuiz()" class="bg-accent hover:bg-yellow-600 text-white font-bold py-3 px-8 rounded-xl shadow-md transition-transform hover:-translate-y-1 flex items-center gap-2 bounce">
+                        ابدأ التحدي! <i class="fa-solid fa-gamepad"></i>
+                    </button>
+                </div>
+            </section>
+
+            <section id="screen-quiz" class="hidden flex-1 flex flex-col fade-in">
+                
+                <!-- Progress Bar -->
+                <div class="mb-6">
+                    <div class="flex justify-between text-sm font-bold text-gray-500 mb-2">
+                        <span id="quiz-progress-text">السؤال 1 من 5</span>
+                        <span id="score-text" class="text-primary">النقاط: 0</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div id="quiz-progress-bar" class="bg-primary h-2.5 rounded-full transition-all duration-500" style="width: 20%"></div>
+                    </div>
+                </div>
+
+                <!-- Question Area -->
+                <div class="bg-white border-2 border-indigo-50 rounded-2xl p-6 shadow-sm mb-6 flex-1 flex flex-col">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="bg-indigo-100 text-primary text-xs font-bold px-2 py-1 rounded uppercase tracking-wider" id="q-category">Time Clauses</span>
+                        <button onclick="playQuestionAudio()" class="text-gray-400 hover:text-primary transition-colors p-2 bg-gray-50 rounded-full"><i class="fa-solid fa-volume-up text-xl"></i></button>
+                    </div>
+                    
+                    <h3 class="en-text text-2xl font-bold text-dark mb-2 leading-relaxed" id="q-text">Loading...</h3>
+                    <p class="text-gray-500 text-sm mb-6" id="q-hint">تلميح...</p>
+
+                    <!-- Options -->
+                    <div class="space-y-3 mt-auto" id="options-container">
+                        <!-- Options injected via JS -->
+                    </div>
+                </div>
+
+                <!-- Feedback Area (Initially hidden) -->
+                <div id="feedback-area" class="hidden p-4 rounded-xl mb-4 border-l-4">
+                    <div class="flex items-start gap-3">
+                        <i id="feedback-icon" class="fa-solid text-2xl mt-1"></i>
+                        <div>
+                            <h4 id="feedback-title" class="font-bold text-lg mb-1"></h4>
+                            <p id="feedback-msg" class="text-sm"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Next Button -->
+                <button id="next-q-btn" onclick="nextQuestion()" class="hidden w-full bg-dark hover:bg-black text-white font-bold py-4 rounded-xl shadow-md transition-transform hover:-translate-y-1">
+                    السؤال التالي <i class="fa-solid fa-arrow-left mr-2"></i>
+                </button>
+            </section>
+
+            <section id="screen-result" class="hidden flex-1 flex flex-col items-center justify-center fade-in py-4 text-center">
+                
+                <h2 class="text-4xl font-extrabold text-dark mb-2">انتهى التحدي! 🎉</h2>
+                <p class="text-xl text-gray-600 mb-6">عمل رائع يا <span id="final-name" class="font-bold text-primary"></span></p>
+
+                <!-- Score Circle -->
+                <div class="relative w-40 h-40 mb-6">
+                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                        <path class="text-gray-200" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        <path id="score-circle" class="text-secondary transition-all duration-1000 ease-out" stroke-dasharray="0, 100" stroke-width="3" stroke-dashoffset="0" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span class="text-4xl font-black text-dark" id="final-score-num">0%</span>
+                    </div>
+                </div>
+
+                <div id="stars-container" class="flex gap-2 text-3xl text-gray-300 mb-8">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex flex-wrap justify-center gap-4 w-full max-w-md mb-8">
+                    <button onclick="generateAndShowCertificate()" class="flex-1 bg-accent hover:bg-yellow-600 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-medal"></i> استخراج الشهادة
+                    </button>
+                    <button onclick="resetApp()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> إعادة المحاولة
+                    </button>
+                </div>
+
+                <!-- Certificate Preview Area -->
+                <div id="certificate-wrapper" class="hidden w-full flex flex-col items-center bg-gray-50 p-4 rounded-2xl border border-gray-200">
+                    <p class="text-sm text-gray-500 mb-3 font-bold"><i class="fa-solid fa-circle-info text-blue-500"></i> اضغط مطولاً على الصورة لحفظها، أو استخدم زر الطباعة</p>
+                    
+                    <div class="relative w-full max-w-2xl shadow-lg border-4 border-white rounded-lg overflow-hidden mb-4" id="print-area">
+                        <!-- Preview Image will be injected here -->
+                        <img id="cert-preview-img" src="" alt="Certificate" class="w-full h-auto block">
+                    </div>
+
+                    <div class="flex gap-3 no-print w-full justify-center">
+                        <button type="button" onclick="printCertificate(event)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-print"></i> طباعة A4
+                        </button>
+                        <a id="download-cert-btn" href="#" download="Certificate.png" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-6 rounded-lg shadow transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-download"></i> تنزيل الصورة
+                        </a>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // --- 1. State Management ---
+        const appState = {
+            studentName: '',
+            score: 0,
+            currentQIndex: 0,
+            questions: [
+                {
+                    category: "Time Clauses",
+                    qText: "Take your ticket and passport with you _________.",
+                    hint: "خذ تذكرتك وجوازك... (متى؟ منطقياً قبل المغادرة)",
+                    options: [
+                        { text: "before you leave for the airport", isCorrect: true, feedback: "أحسنت! من المنطقي أن تأخذ أوراقك (قبل - before) الذهاب للمطار." },
+                        { text: "until they call for boarding", isCorrect: false, feedback: "حاول مرة أخرى! أداة الربط (until - حتى) تعني الانتظار لغاية وقت محدد، ولا تناسب أخذ الجواز هنا." },
+                        { text: "after he does his homework", isCorrect: false, feedback: "إجابة غير مناسبة لسياق السفر." }
+                    ]
+                },
+                {
+                    category: "Time Clauses",
+                    qText: "Passengers should wait by the gate _________.",
+                    hint: "يجب على الركاب الانتظار عند البوابة... (لغاية ماذا؟)",
+                    options: [
+                        { text: "as soon as he arrives", isCorrect: false, feedback: "غير دقيق. نحن نتحدث عن الركاب (الجمع)، وليس شخصاً مفرداً (he)." },
+                        { text: "until they call for boarding", isCorrect: true, feedback: "بطل! يجب الانتظار (حتى - until) ينادون للصعود للطائرة." },
+                        { text: "when I go to the shopping mall", isCorrect: false, feedback: "المعنى غير مرتبط بالمطار نهائياً!" }
+                    ]
+                },
+                {
+                    category: "Prepositions",
+                    qText: "The train travels _________ underground tunnels.",
+                    hint: "القطار يسافر... الأنفاق الأرضية. (يخترقها ويمر بداخلها)",
+                    options: [
+                        { text: "across", isCorrect: false, feedback: "خطأ. (across) تعني عبور الشيء من فوقه أو سطحه كالشارع، وليس الأنفاق." },
+                        { text: "around", isCorrect: false, feedback: "خطأ. (around) تعني الدوران حول الشيء." },
+                        { text: "through", isCorrect: true, feedback: "ممتاز! (through) تعني المرور (خلال) الشيء من الداخل، مثل الأنفاق." }
+                    ]
+                },
+                {
+                    category: "Time Clauses",
+                    qText: "_________ we arrive, we're going straight to the hotel.",
+                    hint: "(بمجرد أن) نصل، سنذهب مباشرة للفندق.",
+                    options: [
+                        { text: "While", isCorrect: false, feedback: "تأمل الجملة. (While) تعني (بينما)، وتستخدم لحدثين مستمرين في نفس الوقت." },
+                        { text: "As soon as", isCorrect: true, feedback: "إجابة ذكية! (As soon as - بمجرد أن) تدل على حدوث شيء فور انتهاء شيء آخر." },
+                        { text: "Until", isCorrect: false, feedback: "غير صحيح في هذا السياق." }
+                    ]
+                },
+                {
+                    category: "Prepositions",
+                    qText: "They're taking a tour _________ the city on a bus.",
+                    hint: "سيقومون بجولة... المدينة بالحافلة.",
+                    options: [
+                        { text: "out of", isCorrect: false, feedback: "خطأ. الجولة تكون داخل ومحيط المدينة، وليس (خارجها - out of)." },
+                        { text: "into", isCorrect: false, feedback: "غير دقيق هنا." },
+                        { text: "around", isCorrect: true, feedback: "رائع! (around) تستخدم بمعنى أخذ جولة (حول / في أنحاء) المكان." }
+                    ]
+                }
+            ]
+        };
+
+        // --- 2. Audio Engine (Web Audio API & Speech Synthesis) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playTone(freq, type, duration, vol=0.1) {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        const sfx = {
+            click: () => playTone(600, 'sine', 0.1, 0.05),
+            correct: () => {
+                playTone(523.25, 'sine', 0.1); // C5
+                setTimeout(() => playTone(659.25, 'sine', 0.2), 100); // E5
+            },
+            wrong: () => {
+                playTone(300, 'sawtooth', 0.3, 0.1);
+                setTimeout(() => playTone(250, 'sawtooth', 0.4, 0.1), 150);
+            },
+            cheer: () => {
+                // simple arpeggio
+                [440, 554, 659, 880].forEach((freq, i) => {
+                    setTimeout(() => playTone(freq, 'sine', 0.3, 0.1), i * 100);
+                });
+            }
+        };
+
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop current speaking
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.85; // Slightly slower for learners
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // --- 3. UI Navigation & Logic ---
+        function hideAllScreens() {
+            document.querySelectorAll('section').forEach(el => {
+                if(el.id.startsWith('screen-')) el.classList.add('hidden');
+            });
+        }
+
+        function nextScreen(screenId) {
+            sfx.click();
+            hideAllScreens();
+            const screen = document.getElementById(screenId);
+            screen.classList.remove('hidden');
+            // reset animation
+            screen.classList.remove('fade-in');
+            void screen.offsetWidth; 
+            screen.classList.add('fade-in');
+        }
+
+        function startApp() {
+            const nameInput = document.getElementById('student-name').value.trim();
+            if (nameInput.length < 2) {
+                document.getElementById('name-error').classList.remove('hidden');
+                sfx.wrong();
+                return;
+            }
+            // Init audio context on first user interaction
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            
+            appState.studentName = nameInput;
+            document.getElementById('name-error').classList.add('hidden');
+            nextScreen('screen-learn-1');
+        }
+
+        // --- 4. Quiz Logic ---
+        function startQuiz() {
+            appState.score = 0;
+            appState.currentQIndex = 0;
+            nextScreen('screen-quiz');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = appState.questions[appState.currentQIndex];
+            
+            // Update UI
+            document.getElementById('q-category').textContent = q.category;
+            document.getElementById('q-text').innerHTML = q.qText.replace('_________', '<span class="text-gray-300 underline underline-offset-4 decoration-2">_________</span>');
+            document.getElementById('q-hint').textContent = `💡 تلميح: ${q.hint}`;
+            
+            // Progress
+            const progressPct = ((appState.currentQIndex + 1) / appState.questions.length) * 100;
+            document.getElementById('quiz-progress-bar').style.width = `${progressPct}%`;
+            document.getElementById('quiz-progress-text').textContent = `السؤال ${appState.currentQIndex + 1} من ${appState.questions.length}`;
+            document.getElementById('score-text').textContent = `النقاط: ${appState.score}`;
+
+            // Reset options & feedback
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            document.getElementById('feedback-area').classList.add('hidden');
+            document.getElementById('next-q-btn').classList.add('hidden');
+
+            // Render options
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn w-full text-left p-4 rounded-xl border-2 border-gray-200 hover:border-primary hover:bg-indigo-50 font-medium text-lg text-dark en-text bg-white relative overflow-hidden';
+                btn.innerHTML = `<span class="mr-3 text-primary font-bold">${String.fromCharCode(65 + index)}.</span> ${opt.text}`;
+                btn.onclick = () => selectOption(btn, opt);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function playQuestionAudio() {
+            const q = appState.questions[appState.currentQIndex];
+            const cleanText = q.qText.replace('_________', 'blank');
+            speak(cleanText);
+        }
+
+        function selectOption(selectedBtn, optionData) {
+            // Disable all buttons
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(b => {
+                b.onclick = null;
+                b.classList.remove('hover:border-primary', 'hover:bg-indigo-50');
+            });
+
+            const feedbackArea = document.getElementById('feedback-area');
+            const feedbackIcon = document.getElementById('feedback-icon');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackMsg = document.getElementById('feedback-msg');
+
+            feedbackArea.classList.remove('hidden', 'bg-red-50', 'border-red-500', 'text-red-800', 'bg-green-50', 'border-green-500', 'text-green-800');
+            
+            if (optionData.isCorrect) {
+                sfx.correct();
+                selectedBtn.classList.add('correct');
+                appState.score += 10;
+                
+                feedbackArea.classList.add('bg-green-50', 'border-green-500', 'text-green-800');
+                feedbackIcon.className = 'fa-solid fa-circle-check text-green-500 text-2xl mt-1';
+                feedbackTitle.textContent = "إجابة صحيحة!";
+                
+                // Confetti for correct answer
+                fireConfetti(50);
+            } else {
+                sfx.wrong();
+                selectedBtn.classList.add('wrong');
+                
+                // Highlight correct one
+                buttons.forEach((b, i) => {
+                    if(appState.questions[appState.currentQIndex].options[i].isCorrect) {
+                        b.classList.add('border-green-400', 'bg-green-50');
+                    }
+                });
+
+                feedbackArea.classList.add('bg-red-50', 'border-red-500', 'text-red-800');
+                feedbackIcon.className = 'fa-solid fa-circle-xmark text-red-500 text-2xl mt-1';
+                feedbackTitle.textContent = "إجابة خاطئة!";
+            }
+
+            // Fill in the blank visually if correct
+            if(optionData.isCorrect) {
+                 document.getElementById('q-text').innerHTML = appState.questions[appState.currentQIndex].qText.replace('_________', `<span class="text-green-600 font-bold underline">${optionData.text}</span>`);
+            }
+
+            feedbackMsg.textContent = optionData.feedback;
+            document.getElementById('score-text').textContent = `النقاط: ${appState.score}`;
+            document.getElementById('next-q-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            sfx.click();
+            appState.currentQIndex++;
+            if (appState.currentQIndex >= appState.questions.length) {
+                showResults();
+            } else {
+                loadQuestion();
+            }
+        }
+
+        // --- 5. Results & Confetti ---
+        function showResults() {
+            nextScreen('screen-result');
+            sfx.cheer();
+            fireConfetti(200);
+
+            const totalPossible = appState.questions.length * 10;
+            const percentage = Math.round((appState.score / totalPossible) * 100);
+            
+            document.getElementById('final-name').textContent = appState.studentName;
+            
+            // Animate Score Circle
+            setTimeout(() => {
+                document.getElementById('final-score-num').textContent = `${percentage}%`;
+                const circle = document.getElementById('score-circle');
+                const strokeDasharray = `${percentage}, 100`;
+                circle.setAttribute('stroke-dasharray', strokeDasharray);
+                
+                // Color based on score
+                if(percentage >= 80) circle.classList.replace('text-secondary', 'text-green-500');
+                else if(percentage >= 50) circle.classList.replace('text-secondary', 'text-yellow-500');
+                else circle.classList.replace('text-secondary', 'text-red-500');
+            }, 500);
+
+            // Stars calculation
+            const starsContainer = document.getElementById('stars-container');
+            starsContainer.innerHTML = '';
+            let numStars = 0;
+            if(percentage >= 90) numStars = 3;
+            else if (percentage >= 60) numStars = 2;
+            else if (percentage >= 30) numStars = 1;
+
+            for(let i=0; i<3; i++) {
+                const star = document.createElement('i');
+                star.className = `fa-solid fa-star ${i < numStars ? 'text-yellow-400 drop-shadow-md bounce' : 'text-gray-300'}`;
+                if(i < numStars) star.style.animationDelay = `${i * 0.2}s`;
+                starsContainer.appendChild(star);
+            }
+        }
+
+        function resetApp() {
+            sfx.click();
+            nextScreen('screen-welcome');
+            document.getElementById('certificate-wrapper').classList.add('hidden');
+            const circle = document.getElementById('score-circle');
+            circle.setAttribute('stroke-dasharray', '0, 100');
+            circle.className = 'text-secondary transition-all duration-1000 ease-out';
+            document.getElementById('final-score-num').textContent = '0%';
+        }
+
+        // Lightweight Vanilla JS Confetti
+        function fireConfetti(particleCount = 100) {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#3B82F6'];
+
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2 + 100,
+                    r: Math.random() * 6 + 2,
+                    dx: Math.random() * 10 - 5,
+                    dy: Math.random() * -10 - 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    tilt: Math.floor(Math.random() * 10) - 10,
+                    tiltAngleInc: (Math.random() * 0.07) + 0.05,
+                    tiltAngle: 0
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let active = false;
+                
+                particles.forEach(p => {
+                    p.tiltAngle += p.tiltAngleInc;
+                    p.y += (Math.cos(p.tiltAngle) + 1 + p.r / 2) / 2;
+                    p.x += Math.sin(p.tiltAngle) * 2;
+                    p.dy += 0.1; // gravity
+                    p.y += p.dy;
+                    p.x += p.dx;
+
+                    if (p.y <= canvas.height) active = true;
+
+                    ctx.beginPath();
+                    ctx.lineWidth = p.r;
+                    ctx.strokeStyle = p.color;
+                    ctx.moveTo(p.x + p.tilt + p.r, p.y);
+                    ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r);
+                    ctx.stroke();
+                });
+
+                if (active) requestAnimationFrame(draw);
+                else ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+            draw();
+        }
+
+        // --- 6. Native Canvas Certificate Generation ---
+        function generateAndShowCertificate() {
+            sfx.click();
+            const wrapper = document.getElementById('certificate-wrapper');
+            wrapper.classList.remove('hidden');
+            
+            // Scroll to it
+            wrapper.scrollIntoView({ behavior: 'smooth' });
+
+            const canvas = document.createElement('canvas');
+            // High Res A4 Landscape (300dpi approximation)
+            canvas.width = 2244; 
+            canvas.height = 1586;
+            const ctx = canvas.getContext('2d');
+
+            const totalPossible = appState.questions.length * 10;
+            const percentage = Math.round((appState.score / totalPossible) * 100);
+            
+            // 1. Background Fill
+            ctx.fillStyle = '#F0FDF4'; // Very light green bg
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 2. Decorative Borders
+            // Outer thick green
+            ctx.strokeStyle = '#166534'; 
+            ctx.lineWidth = 40;
+            ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
+            
+            // Inner gold
+            ctx.strokeStyle = '#FACC15'; 
+            ctx.lineWidth = 12;
+            ctx.strokeRect(100, 100, canvas.width - 200, canvas.height - 200);
+
+            // Corner decorations
+            ctx.fillStyle = '#166534';
+            const drawCorner = (x, y) => {
+                ctx.beginPath();
+                ctx.arc(x, y, 40, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#FACC15';
+                ctx.beginPath();
+                ctx.arc(x, y, 15, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#166534';
+            };
+            drawCorner(100, 100);
+            drawCorner(canvas.width - 100, 100);
+            drawCorner(100, canvas.height - 100);
+            drawCorner(canvas.width - 100, canvas.height - 100);
+
+            // 3. Texts
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // Main Titles
+            ctx.fillStyle = '#166534';
+            ctx.font = 'bold 130px "Cairo", sans-serif';
+            ctx.fillText('شهادة إنجاز وتفوق', canvas.width / 2, 350);
+
+            ctx.fillStyle = '#475569';
+            ctx.font = 'bold 70px "Poppins", sans-serif';
+            ctx.fillText('CERTIFICATE OF ACHIEVEMENT', canvas.width / 2, 480);
+
+            // Separator Line
+            ctx.beginPath();
+            ctx.moveTo(canvas.width/2 - 400, 560);
+            ctx.lineTo(canvas.width/2 + 400, 560);
+            ctx.strokeStyle = '#D1D5DB';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // Subtitle
+            ctx.fillStyle = '#334155';
+            ctx.font = '60px "Cairo", sans-serif';
+            ctx.fillText('نفتخر بمنح هذه الشهادة للطالب / للطالبة:', canvas.width / 2, 700);
+
+            // Student Name
+            ctx.fillStyle = '#B91C1C'; // Red-700
+            ctx.font = 'bold 150px "Cairo", sans-serif';
+            ctx.fillText(appState.studentName, canvas.width / 2, 880);
+
+            // Reason & Score
+            ctx.fillStyle = '#334155';
+            ctx.font = '55px "Cairo", sans-serif';
+            ctx.fillText(`لإجتياز درس (Time Clauses & Prepositions) بتميز`, canvas.width / 2, 1050);
+            
+            ctx.font = 'bold 65px "Cairo", sans-serif';
+            let gradeText = percentage >= 90 ? 'ممتاز' : (percentage >= 60 ? 'جيد جداً' : 'جيد');
+            ctx.fillText(`بنسبة إتقان: ${percentage}% - بتقدير: ${gradeText}`, canvas.width / 2, 1150);
+
+            // Footer (Teacher Name & Date)
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#0F172A';
+            ctx.font = '50px "Poppins", sans-serif';
+            ctx.fillText('Teacher:', 250, 1350);
+            ctx.font = 'bold 55px "Poppins", sans-serif';
+            ctx.fillStyle = '#4F46E5';
+            ctx.fillText('Mr. Mohammed AlFaifi', 250, 1420);
+
+            ctx.textAlign = 'right';
+            ctx.fillStyle = '#0F172A';
+            ctx.font = '50px "Poppins", sans-serif';
+            ctx.fillText('Date:', canvas.width - 250, 1350);
+            ctx.font = '55px "Poppins", sans-serif';
+            const today = new Date().toLocaleDateString('en-GB');
+            ctx.fillText(today, canvas.width - 250, 1420);
+
+            // Draw a fake "Seal"
+            ctx.translate(canvas.width / 2, 1350);
+            
+            // Draw rays for seal
+            ctx.fillStyle = '#F59E0B'; // Amber
+            for(let i=0; i<30; i++) {
+                ctx.rotate(Math.PI / 15);
+                ctx.beginPath();
+                ctx.moveTo(0,0);
+                ctx.lineTo(80, -20);
+                ctx.lineTo(100, 0);
+                ctx.lineTo(80, 20);
+                ctx.fill();
+            }
+            
+            ctx.beginPath();
+            ctx.arc(0, 0, 70, 0, Math.PI * 2);
+            ctx.fillStyle = '#B45309';
+            ctx.fill();
+            
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 30px "Poppins", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('EXCELLENT', 0, 10);
+            
+            ctx.resetTransform();
+
+            // Convert to Image and update DOM
+            // استخدام Blob بدلاً من DataURL لحماية المتصفح من الانهيار (Crash/Reload) بسبب حجم الصورة
+            canvas.toBlob((blob) => {
+                const blobUrl = URL.createObjectURL(blob);
+                
+                const previewImg = document.getElementById('cert-preview-img');
+                previewImg.src = blobUrl;
+                
+                const downloadBtn = document.getElementById('download-cert-btn');
+                downloadBtn.href = blobUrl;
+                downloadBtn.download = `شهادة_${appState.studentName.replace(/\s+/g, '_')}.png`;
+            }, 'image/png');
+        }
+
+        // دالة الطباعة الآمنة لمنع التحديث العشوائي للصفحة
+        function printCertificate(e) {
+            if (e) e.preventDefault();
+            window.print();
+        }
+
+    </script>
+</body>
+</html>
