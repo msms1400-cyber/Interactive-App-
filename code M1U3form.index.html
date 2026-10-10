@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق اللغة الإنجليزية - المعلم محمد الفيفي</title>
+    <!-- استدعاء الخطوط العربية والإنجليزية -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
+    <!-- مكتبة المؤثرات البصرية (Confetti) -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- مكتبة تحويل الشهادة إلى صورة -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --secondary: #9013FE;
+            --success: #00C853;
+            --error: #FF3D00;
+            --bg-color: #F0F4F8;
+            --card-bg: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #74EBD5 0%, #9FACE6 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* حاوية التطبيق الرئيسية */
+        .app-container {
+            background: var(--card-bg);
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 5px solid white;
+        }
+
+        .teacher-brand {
+            font-family: 'Fredoka One', 'Cairo', sans-serif;
+            color: var(--secondary);
+            font-size: 18px;
+            margin-bottom: 20px;
+            background: #F3E5F5;
+            padding: 10px;
+            border-radius: 15px;
+            display: inline-block;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        /* الشاشات */
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* المدخلات والأزرار */
+        input[type="text"] {
+            width: 90%;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 10px;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-green { background: linear-gradient(45deg, #00b09b, #96c93d); }
+        .btn-orange { background: linear-gradient(45deg, #f12711, #f5af19); }
+
+        /* منطقة الشرح والقواعد */
+        .lesson-box {
+            background: #E3F2FD;
+            border-right: 5px solid var(--primary);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: right;
+            margin-bottom: 20px;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .lesson-box strong { color: var(--primary); font-family: 'Fredoka One', sans-serif; font-size: 18px;}
+        .lesson-box span { color: #555; }
+
+        /* منطقة الأسئلة */
+        .question-eng {
+            font-family: 'Fredoka One', sans-serif;
+            font-size: 24px;
+            color: #2C3E50;
+            margin-top: 20px;
+            direction: ltr;
+        }
+
+        .question-ar {
+            font-size: 16px;
+            color: #7F8C8D;
+            margin-bottom: 20px;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            direction: ltr;
+        }
+
+        .option-btn {
+            background: white;
+            border: 3px solid #BDC3C7;
+            padding: 15px;
+            font-size: 22px;
+            font-family: 'Fredoka One', sans-serif;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #2C3E50;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary);
+            background: #F0F8FF;
+        }
+
+        .option-btn.correct {
+            background: var(--success);
+            color: white;
+            border-color: #009624;
+        }
+
+        .option-btn.wrong {
+            background: var(--error);
+            color: white;
+            border-color: #D50000;
+        }
+
+        .feedback {
+            font-size: 20px;
+            font-weight: bold;
+            min-height: 30px;
+            margin-bottom: 15px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background: #f1f2f6;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            color: #2f3542;
+            margin-bottom: 20px;
+        }
+
+        /* تصميم الشهادة A4 (مخفية في العرض العادي، تظهر فقط عند التصدير) */
+        .certificate-wrapper {
+            display: none; /* يتم إظهارها برمجياً عند التصدير */
+            width: 297mm;
+            height: 210mm;
+            background: #fff;
+            padding: 20mm;
+            position: absolute;
+            top: 0;
+            left: -9999px; /* إبعادها عن الشاشة */
+            z-index: -1;
+            box-sizing: border-box;
+        }
+
+        .certificate-content {
+            border: 10px double var(--secondary);
+            height: 100%;
+            padding: 40px;
+            text-align: center;
+            background: url('https://www.transparenttextures.com/patterns/cubes.png') #fdfbfb;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cert-header {
+            font-family: 'Fredoka One', sans-serif;
+            font-size: 50px;
+            color: var(--secondary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .cert-title-ar {
+            font-size: 35px;
+            font-weight: 900;
+            color: #333;
+            margin-bottom: 40px;
+        }
+
+        .cert-body {
+            font-size: 28px;
+            color: #555;
+            line-height: 2;
+        }
+
+        .cert-name {
+            font-size: 45px;
+            color: var(--primary);
+            font-weight: 900;
+            border-bottom: 2px dashed var(--primary);
+            padding: 0 40px;
+            display: inline-block;
+            margin: 10px 0;
+        }
+
+        .cert-score {
+            font-size: 35px;
+            color: var(--success);
+            font-weight: 900;
+        }
+
+        .cert-footer {
+            margin-top: 50px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 50px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .cert-signature {
+            border-top: 2px solid #333;
+            padding-top: 10px;
+        }
+
+        /* إعدادات الطباعة */
+        @media print {
+            body * { visibility: hidden; }
+            #printable-certificate, #printable-certificate * {
+                visibility: visible;
+            }
+            #printable-certificate {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 297mm;
+                height: 210mm;
+                display: block !important;
+            }
+            @page { size: A4 landscape; margin: 0; }
+        }
+
+        /* معاينة الشهادة داخل التطبيق */
+        .cert-preview {
+            background: #fff;
+            border: 2px solid #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<!-- واجهة التطبيق المرئية للطلاب -->
+<div class="app-container">
+    <div class="teacher-brand">👑 By Teacher: Mohammad AlFaifi</div>
+
+    <!-- شاشة البداية وإدخال الاسم -->
+    <div id="screen-welcome" class="screen active">
+        <h2>أهلاً بك يا بطل! 🌟</h2>
+        <p style="margin-bottom: 20px; color: #555;">أدخل اسمك الثلاثي لبدء التحدي ولتجهيز شهادتك الخاصة.</p>
+        <input type="text" id="studentName" placeholder="اكتب اسمك هنا..." autocomplete="off">
+        <br>
+        <button class="btn" onclick="startApp()">ابدأ التحدي الآن 🚀</button>
+    </div>
+
+    <!-- شاشة الشرح المبسط (عربي/إنجليزي) -->
+    <div id="screen-lesson" class="screen">
+        <h2>📚 شرح سريع ومبسط</h2>
+        <div class="lesson-box">
+            <p>اليوم سنتعلم عن <b>الضمائر الموصولة (Relative Pronouns)</b> وكيف نختارها بسهولة:</p>
+            <br>
+            <p>🧑 <strong>Who</strong> ➔ نستخدمها إذا كنا نتحدث عن <span>(شخص عاقل / إنسان)</span>.</p>
+            <p><i>مثال:</i> The boy <b>who</b> is reading (الولد <b>الذي</b> يقرأ).</p>
+            <hr style="margin: 10px 0; border: 0; border-top: 1px solid #ccc;">
+            <p>🚗🐶 <strong>Which</strong> ➔ نستخدمها إذا كنا نتحدث عن <span>(حيوان أو جماد / غير عاقل)</span>.</p>
+            <p><i>مثال:</i> The car <b>which</b> is blue (السيارة <b>التي</b> لونها أزرق).</p>
+        </div>
+        <button class="btn btn-green" onclick="startQuiz()">فهمت الدرس، لنبدأ الأسئلة ✅</button>
+    </div>
+
+    <!-- شاشة الأسئلة -->
+    <div id="screen-quiz" class="screen">
+        <div class="stats">
+            <span id="questionCount">السؤال: 1/5</span>
+            <span id="scoreTracker">النقاط: ⭐ 0</span>
+        </div>
+        
+        <div class="question-eng" id="q-eng">Loading...</div>
+        <div class="question-ar" id="q-ar">جاري التحميل...</div>
+
+        <div class="options-container" id="options-box">
+            <!-- الأزرار تضاف برمجياً -->
+        </div>
+
+        <div class="feedback" id="feedback-msg"></div>
+
+        <button class="btn" id="next-btn" style="display:none;" onclick="nextQuestion()">السؤال التالي ➔</button>
+    </div>
+
+    <!-- شاشة النتيجة والشهادة -->
+    <div id="screen-result" class="screen">
+        <h2>🎉 مبروك إتمام التحدي! 🎉</h2>
+        
+        <div class="cert-preview">
+            <p>الطالب: <span id="res-name" style="color:var(--primary);"></span></p>
+            <p>النتيجة: <span id="res-score" style="color:var(--success); font-size:24px;"></span></p>
+            <p style="font-size: 12px; color: #888; margin-top:10px;">تم إصدار شهادة إنجاز باسمك</p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+            <button class="btn btn-green" onclick="downloadCertificate()">📥 تحميل الشهادة كصورة</button>
+            <button class="btn btn-orange" onclick="printCertificate()">🖨️ طباعة الشهادة الورقية</button>
+            <button class="btn" style="background: #333;" onclick="location.reload()">🔄 إعادة الاختبار</button>
+        </div>
+    </div>
+</div>
+
+<!-- تصميم الشهادة الفعلي (مخفي، يستخدم للتصدير والطباعة) -->
+<div class="certificate-wrapper" id="printable-certificate">
+    <div class="certificate-content">
+        <div class="cert-header">Certificate of Achievement</div>
+        <div class="cert-title-ar">شهادة تفوق وإنجاز</div>
+        
+        <div class="cert-body">
+            تشهد إدارة التطبيقات التعليمية بأن الطالب المتميز:<br>
+            <span class="cert-name" id="cert-student-name">اسم الطالب</span><br>
+            قد اجتاز اختبار (Relative Pronouns) بنجاح وتفوق وحصل على نتيجة:<br>
+            <span class="cert-score" id="cert-final-score">100%</span>
+        </div>
+
+        <div class="cert-footer">
+            <div style="text-align: center;">
+                <p>تاريخ الإصدار / Date</p>
+                <div class="cert-signature" id="cert-date">2024-01-01</div>
+            </div>
+            <div style="text-align: center;">
+                <p>إعداد المعلم / Teacher</p>
+                <div class="cert-signature" style="font-family: 'Fredoka One', sans-serif; color: #9013FE;">Mohammad AlFaifi</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- إعدادات نظام الصوت باستخدام Web Audio API (لا يحتاج ملفات خارجية) ---
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(type) {
+        if(audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        if(type === 'correct') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+            osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.5);
+        } else if(type === 'wrong') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.3);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        }
+    }
+
+    // --- قاعدة بيانات الأسئلة (مدعومة بالشرح العربي) ---
+    const questions = [
+        {
+            eng: "The teacher ________ helped me is kind.",
+            ar: "(المعلم ... ساعدني لطيف جداً - المعلم عاقل 🧑)",
+            options: ["who", "which"],
+            answer: "who"
+        },
+        {
+            eng: "This is the book ________ I read.",
+            ar: "(هذا هو الكتاب ... قرأته - الكتاب غير عاقل 📚)",
+            options: ["who", "which"],
+            answer: "which"
+        },
+        {
+            eng: "I met the boy ________ plays football.",
+            ar: "(قابلت الولد ... يلعب كرة القدم - الولد عاقل 👦)",
+            options: ["who", "which"],
+            answer: "who"
+        },
+        {
+            eng: "The car ________ is blue is mine.",
+            ar: "(السيارة ... لونها أزرق ملكي - السيارة غير عاقل 🚗)",
+            options: ["which", "who"],
+            answer: "which"
+        },
+        {
+            eng: "Where is the man ________ bought the phone?",
+            ar: "(أين الرجل ... اشترى الهاتف؟ - الرجل عاقل 👨)",
+            options: ["which", "who"],
+            answer: "who"
+        }
+    ];
+
+    let currentQ = 0;
+    let score = 0;
+    let studentName = "";
+
+    // --- التنقل بين الشاشات ---
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function startApp() {
+        const nameInput = document.getElementById('studentName').value.trim();
+        if(nameInput === "") {
+            alert("الرجاء إدخال اسمك أولاً يا بطل!");
+            return;
+        }
+        studentName = nameInput;
+        showScreen('screen-lesson');
+    }
+
+    function startQuiz() {
+        currentQ = 0;
+        score = 0;
+        showScreen('screen-quiz');
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('feedback-msg').innerHTML = '';
+        
+        const qData = questions[currentQ];
+        document.getElementById('q-eng').innerHTML = qData.eng;
+        document.getElementById('q-ar').innerHTML = qData.ar;
+        document.getElementById('questionCount').innerText = `السؤال: ${currentQ + 1}/${questions.length}`;
+        document.getElementById('scoreTracker').innerText = `النقاط: ⭐ ${score}`;
+
+        const optionsBox = document.getElementById('options-box');
+        optionsBox.innerHTML = '';
+        
+        qData.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(btn, opt, qData.answer);
+            optionsBox.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(btn, selected, correct) {
+        // تعطيل الأزرار بعد الإجابة
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(b => b.style.pointerEvents = 'none');
+
+        const feedbackMsg = document.getElementById('feedback-msg');
+
+        if(selected === correct) {
+            btn.classList.add('correct');
+            playSound('correct');
+            confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
+            feedbackMsg.innerHTML = '✨ إجابة صحيحة! بطل! ✨';
+            feedbackMsg.style.color = 'var(--success)';
+            score += 20;
+        } else {
+            btn.classList.add('wrong');
+            playSound('wrong');
+            feedbackMsg.innerHTML = `❌ إجابة خاطئة! الصحيح هو: ${correct}`;
+            feedbackMsg.style.color = 'var(--error)';
+            // إظهار الإجابة الصحيحة باللون الأخضر
+            allBtns.forEach(b => {
+                if(b.innerText === correct) b.classList.add('correct');
+            });
+        }
+        
+        document.getElementById('scoreTracker').innerText = `النقاط: ⭐ ${score}`;
+        document.getElementById('next-btn').style.display = 'inline-block';
+    }
+
+    function nextQuestion() {
+        currentQ++;
+        if(currentQ < questions.length) {
+            loadQuestion();
+        } else {
+            finishQuiz();
+        }
+    }
+
+    function finishQuiz() {
+        showScreen('screen-result');
+        document.getElementById('res-name').innerText = studentName;
+        document.getElementById('res-score').innerText = `${score} / 100`;
+
+        // تجهيز بيانات الشهادة المخفية
+        document.getElementById('cert-student-name').innerText = studentName;
+        document.getElementById('cert-final-score').innerText = `${score} / 100`;
+        
+        const today = new Date();
+        document.getElementById('cert-date').innerText = today.toLocaleDateString('en-GB');
+
+        if(score >= 80) {
+            confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 } });
+        }
+    }
+
+    // --- وظائف الشهادة (حفظ كصورة / طباعة) ---
+    function downloadCertificate() {
+        const certElement = document.getElementById('printable-certificate');
+        // إظهار الشهادة مؤقتاً للتصوير
+        certElement.style.display = 'block';
+        
+        html2canvas(certElement, { scale: 2 }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `Certificate_${studentName}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            // إخفاء الشهادة بعد التصوير
+            certElement.style.display = 'none';
+        });
+    }
+
+    function printCertificate() {
+        window.print();
+    }
+
+</script>
+
+</body>
+</html>
